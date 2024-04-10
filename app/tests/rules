@@ -1,0 +1,29 @@
+
+
+required:
+
+    resourceName: Title/Name of resource which is displayed
+    resourceDescription: Description oft he resource
+    resourceHomePage: Homepage oft he resource
+    resourceType: [ "Catalog" / “Patient Registry“ / “Biobank” / “Guideline“ / “Dataset“ ]
+    queryType: Type of endpoint [“individuals”, “catalog”]
+
+ 
+
+optional:
+
+    logo (recommended)
+    email (recommended) -> to notify if level 2 connection fails (not tested yet)
+    created
+    updated
+
+required for Level 2:
+
+(required) <> rdf:type dcat:DataService
+
+(required) <> dcat:endpointURL <http://example.org/individuals>
+
+(required) <> dcat:endpointDescription <http://example.org/beacon/openapi.json>
+(required) <> dcterms:type <https://w3id.org/ejp-rd/vocabulary#VPBeacon2_individuals>
+
+(recommended) <> dcat:servesDataset <http://example.org/mydata>
