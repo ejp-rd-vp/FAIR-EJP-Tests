@@ -46,6 +46,7 @@ def set_routes(classes: allclasses)
       begin
         @result = FAIRTest.send(id, **{ guid: @guid })
       rescue StandardError
+        warn "sending #{@guid} to test #{id} failed\n"
         @result = '{}'
       end
   
