@@ -84,9 +84,11 @@ class FAIRTest
     discoverables = results.map { |r| r[:s].to_s }
 
     requiredpredicates = %w[dcat:theme dcat:contactPoint dct:description
-                            dct:isPartOf dct:keyword dct:language dct:license
+                            dct:keyword dct:language dct:license
                             dct:publisher dct:title dcat:contactPoint dcat:landingPage]
 
+    specialpredicates = %w{dct:isPartOf}
+    
     optionalpredicates = %w[foaf:logo dct:issued dct:modified]
 
     discoverables.each do |d|
