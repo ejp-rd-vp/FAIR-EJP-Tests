@@ -1,76 +1,12 @@
 version: "2.0"
 services:
-  # db: 
-  #   image: mysql/mysql-server:5.7.29
-  #   container_name: evaluator-mysql
-  #   command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-  #   restart: always
-  #   ports:
-  #     - 3306:3306
-  #   environment:
-  #     MYSQL_HOST: db
-  #     MYSQL_ROOT_PASSWORD: evaluator_root
-  #     MYSQL_DATABASE: evaluator_docker
-  #     MYSQL_USER: evaluator_user
-  #     MYSQL_PASSWORD: evaluator_password
-  #   volumes:
-  #     - evaluator-mysql:/var/lib/mysql
 
-  # evaluator: 
-  #   image: fairdatasystems/evaluator:v1.0.1
-  #   container_name: evaluator
-  #   environment:
-  #     EVALUATOR_PROTOCOL: http
-  #     EVALUATOR_HOST: localhost  # should be localhost to hit the API
-  #     EVALUATOR_PORT: 3000       # rails default
-  #     RAILS_ENV: production
-  #     SECRET_KEY_BASE: THEFAIREVALUATORISNOWAVAILABLETOYOU
-  #     RAILS_RELATIVE_URL_ROOT: /FAIR_Evaluator  # http://localhost:3000/FAIR_Evaluator/
-  #     MYSQL_HOST: db
-  #     MYSQL_ROOT_PASSWORD: evaluator_root
-  #     MYSQL_DATABASE: evaluator_docker
-  #     MYSQL_USER: evaluator_user
-  #     MYSQL_PASSWORD: evaluator_password
-  #   ports:
-  #     - "3000:3000"
-  #   expose:
-  #     - "3000"
-  #   depends_on:
-  #     - db
-  #     - tests
-  #   links:
-  #     - db
-  #     - tests
-
-  tests: 
-    image: markw/fair-core-tests:0.0.1
-    container_name: tests
+  ejptests: 
+    image: markw/ejp-qc-tests:0.1.0
     environment:
       TEST_PROTOCOL: http
       TEST_HOST: "tests:4567" # from the perspective of the evaluator container
       TEST_PATH: /tests/     # becomes http://tests:8080/tests/test_name_here
-      FAIRSHARING_KEY: your_fairsharing_key_here
-      BING_API: your_bing_api_key_here
     ports:
       - "8080:4567"
 
-  tika:
-    image: apache/tika:1.23
-    container_name: evaluator-tika
-    restart: always
-
-  # front-end:
-  #   image: fairdatasystems/evaluator-frontend:v0.0.11
-  #   container_name: "front-end"
-  #   ports:
-  #     - "6789:4567"
-  #   command: ruby index.rb -o 0.0.0.0
-  #   environment:
-  #     - RUBYOPT=-W0 -KU -E utf-8:utf-8
-
-
-# volumes:
-#   evaluator-mysql:
-#     external: true
-
- 

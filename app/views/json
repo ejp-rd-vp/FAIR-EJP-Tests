@@ -1,0 +1,97 @@
+[
+  {
+    "@id": "urn:fairtestoutput:c8f6d401-a447-4232-92d6-fbc7671292d7",
+    "@type": [
+      "https://w3id.org/ftr#TestResult"
+    ],
+    "http://schema.org/identifier": [
+      {
+        "@id": "urn:fairtestoutput:c8f6d401-a447-4232-92d6-fbc7671292d7"
+      }
+    ],
+    "http://schema.org/name": [
+      {
+        "@language": "en",
+        "@value": "EJP-RD: Test for Core Metadata"
+      }
+    ],
+    "http://schema.org/version": [
+      {
+        "@id": "1:Tst-0.1.0"
+      }
+    ],
+    "http://schema.org/description": [
+      {
+        "@language": "en",
+        "@value": "Test if the minimal metadata requirements are met to be in the EJP VP"
+      }
+    ],
+    "http://schema.org/license": [
+      {
+        "@id": "https://creativecommons.org/licenses/by/4.0/"
+      }
+    ],
+    "https://w3id.org/ftr#status": [
+      {
+        "@language": "en",
+        "@value": "fail"
+      }
+    ],
+    "https://w3id.org/ftr#summary": [
+    {
+        "@language": "en",
+        "@value": "Summary of test results: FAILURE: Nothing in the FDP was flagged to be VPDiscoverable."
+      }
+    ],
+    "http://www.w3.org/ns/prov#generatedAtTime": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#date",
+        "@value": "2024-04-13T09:35:28+00:00"
+      }
+    ],
+    "https://w3id.org/ftr#log": [
+      {
+        "@language": "en",
+        "@value": "INFO: TEST VERSION \'1:Tst-0.1.0\'\nINFO: Beginning EJP-Specific tests for Core Metadata Elements, required by the Virtual Platform\nINFO:  Testing for existence of a VPDiscoverable resource within the FDP record.\nFAILURE: Nothing in the FDP was flagged to be VPDiscoverable."
+      }
+    ],
+    "https://w3id.org/ftr#completion": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#int",
+        "@value": "100"
+      }
+    ],
+    "https://w3id.org/ftr#definedBy": [
+      {
+        "@id": "https://example.org/none"
+      }
+    ],
+    "http://www.w3.org/ns/prov#wasDerivedFrom": [
+      {
+        "@id": "urn:fairtestentity:7a3cf161-dda2-4968-bbbf-7d355ab627be"
+      }
+    ]
+  },
+  {
+    "@id": "https://example.org/none",
+    "@type": [
+      "https://w3id.org/ftr#TestSpecification"
+    ]
+  },
+  {
+    "@id": "urn:fairtestentity:7a3cf161-dda2-4968-bbbf-7d355ab627be",
+    "@type": [
+      "http://www.w3.org/ns/prov#Entity"
+    ],
+    "http://schema.org/identifier": [
+      {
+        "@id": "https://w3id.org/ctsr-fdp/"
+      }
+    ],
+    "http://schema.org/url": [
+      {
+        "@id": "https://w3id.org/ctsr-fdp/"
+      }
+    ]
+  }
+]

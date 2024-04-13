@@ -1,14 +1,17 @@
-require_relative File.dirname(__FILE__) + '/../lib/harvester.rb'
+require_relative "#{File.dirname(__FILE__)}/../lib/fdp.rb"
+require_relative "#{File.dirname(__FILE__)}/../lib/openapi.rb"
 
 class FAIRTest
   def self.ejp_base_metadata_meta
+    # FAIRTest::HARVESTER_VERSION == "1" unless FAIRTest::HARVESTER_VERSION
     {
-      testversion: HARVESTER_VERSION + ':' + 'Tst-2.0.0',
+      # testversion: "#{HARVESTER_VERSION}:Tst-0.1.0",
+      testversion: "1:Tst-0.1.0",
       testname: 'EJP-RD: Test for Core Metadata',
       testid: 'ejp_base_metadata',
       description: 'Test if the minimal metadata requirements are met to be in the EJP VP',
       metric: 'https://example.org/none',
-      principle: 'none'
+      principle: 'none',
     }
   end
 
@@ -20,76 +23,90 @@ class FAIRTest
       name: ejp_base_metadata_meta[:testname],
       version: ejp_base_metadata_meta[:testversion],
       description: ejp_base_metadata_meta[:description],
-      metric: ejp_base_metadata_meta[:metric]
+      metric: ejp_base_metadata_meta[:metric],
     )
 
     output.comments << "INFO: TEST VERSION '#{ejp_base_metadata_meta[:testversion]}'\n"
 
-    metadata = FAIRChampion::Harvester.resolveit(guid) # this is where the magic happens!
+    # metadata = FAIRChampion::Harvester.resolveit(guid) # this is where the magic happens!
+    fdp = FDP.new(address: guid)
+    # metadata = FAIRChampion::Harvester.resolveejp(guid) # this is where the magic happens!
+    # warn fdp.inspect
+    # warn fdp.graph
+    # warn fdp.graph.size
 
-    metadata.comments.each do |c|
-      output.comments << c
-    end
 
-    if metadata.guidtype == 'unknown'
-      output.score = 'indeterminate'
-      output.comments << "INDETERMINATE: The identifier #{guid} did not match any known identification system.\n"
-      return output.createEvaluationResponse
-    end
-
-    hash = metadata.hash
-    graph = metadata.graph
-    properties = FAIRChampion::Harvester.deep_dive_properties(hash)
+    graph = fdp.graph
     #############################################################################################################
     #############################################################################################################
     #############################################################################################################
     #############################################################################################################
 
-    output.comments << "INFO: Searching metadata for likely identifiers to the data record\n"
+    output.comments << "INFO: Beginning EJP-Specific tests for Core Metadata Elements, required by the Virtual Platform\n"
 
+    g = graph
     prefixes = "PREFIX dcat: <http://www.w3.org/ns/dcat#>
     PREFIX dct: <http://purl.org/dc/terms/>
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
     PREFIX ejp: <https://w3id.org/ejp-rd/vocabulary#>
     "
 
+    output.comments << "INFO: Checking for the use of the deprecated pur.org vocabulary\n"
+
+    query = SPARQL.parse("#{prefixes}
+    select DISTINCT ?p where {?s ?p ?o . FILTER(CONTAINS(STR(?p), 'purl.archive.org/ejp-rd/'))}")
+    results = query.execute(g)
+    if results.any?
+      output.score = 'fail'
+      output.comments << "FAILURE: FDP is still using the deprecated purl predicates\n"
+      return output.createEvaluationResponse
+    else
+      output.comments << "INFO: Didn't see any deprecated predicates.\n"
+    end
+
+
+
     # test discoverability
-    output.comments << "INFO:  Testing for VPDiscoverable.\n"
+    output.comments << "INFO:  Testing for existence of a VPDiscoverable resource within the FDP record.\n"
     query = SPARQL.parse("#{prefixes}
       select ?s where {?s ejp:vpConnection ejp:VPDiscoverable }")
     results = query.execute(g)
     if results.any?
-      output.comments << "INFO: Found the EJP VPDiscoverable property somewhere in the FDP '\n"
+      # warn "one"
+      output.comments << "INFO: Found the EJP VPDiscoverable property somewhere in the FDP.\n"
     else
+      # warn "two"
       output.score = 'fail'
-      output.comments << "FAILURE: Nothing in the FDP was flagged to be discoverable\n"
+      output.comments << "FAILURE: Nothing in the FDP was flagged to be VPDiscoverable.\n"
       return output.createEvaluationResponse
     end
 
-    discoverables = results.map {|r| r[:s].to_s}
-
+    discoverables = results.map { |r| r[:s].to_s }
 
     requiredpredicates = %w[dcat:theme dcat:contactPoint dct:description
                             dct:isPartOf dct:keyword dct:language dct:license
                             dct:publisher dct:title dcat:contactPoint dcat:landingPage]
 
-    optionalpredicates = %w[foaf:logo dct:issued dct:modified ]
+    optionalpredicates = %w[foaf:logo dct:issued dct:modified]
 
     discoverables.each do |d|
       optionalpredicates.each do |p|
+        # warn "three"
+
         output.comments << "INFO:  Testing Discoverable #{d} for optional property #{p}.\n"
         query = SPARQL.parse("#{prefixes}
           SELECT ?o WHERE { <#{d}> #{p} ?o }")
         results = query.execute(g)
         output.comments << if results.any?
-                            "INFO: Found the EJP recommended metadata element #{p} on the Discoverable entity #{d}'\n"
-                          else
-                            "WARN: the recommended metadata element #{p} could not be found on the Discoverable entity #{d}\n"
-                          end
+                             "INFO: Found the EJP recommended metadata element #{p} on the Discoverable entity #{d}'\n"
+                           else
+                             "WARN: the recommended metadata element #{p} could not be found on the Discoverable entity #{d}\n"
+                           end
       end
     end
 
     failflag = false
+    # warn "four"
 
     discoverables.each do |d|
       requiredpredicates.each do |p|
@@ -98,10 +115,11 @@ class FAIRTest
           SELECT ?o WHERE { <#{d}> #{p} ?o }")
         results = query.execute(g)
         if results.any?
+          # warn "five"
           output.comments << "INFO: Found the EJP mandatory metadata element #{p} on the Discoverable entity #{d}'\n"
-
         else
-          output.comments <<  "WARN: the mandatory metadata element #{p} could not be found on the Discoverable entity #{d}\n"
+          # warn "six"
+          output.comments << "WARN: the mandatory metadata element #{p} could not be found on the Discoverable entity #{d}\n"
           failflag = true
         end
       end
@@ -114,6 +132,7 @@ class FAIRTest
       output.comments << "SUCCESS: Found all of the EJP reqired metadata elements\n"
     end
 
+    # warn output.inspect
     output.createEvaluationResponse
   end
 
@@ -125,6 +144,7 @@ class FAIRTest
                       tests_metric: ejp_base_metadata_meta[:metric],
                       version: ejp_base_metadata_meta[:testversion],
                       applies_to_principle: ejp_base_metadata_meta[:principle],
+                      path: ejp_base_metadata_meta[:testid],
                       organization: 'EJP-RD',
                       org_url: 'https://ejprarediseases.org//',
                       responsible_developer: 'Mark D Wilkinson',
@@ -133,7 +153,7 @@ class FAIRTest
                       protocol: ENV.fetch('TEST_PROTOCOL', nil),
                       host: ENV.fetch('TEST_HOST', nil),
                       basePath: ENV.fetch('TEST_PATH', nil),
-                      path: fc_data_authorization_meta[:testid],
+                      path: ejp_base_metadata_meta[:testid],
                       response_description: 'The response is "pass", "fail" or "indeterminate"',
                       schemas: schemas)
     api.get_api

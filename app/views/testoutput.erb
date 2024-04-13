@@ -1,0 +1,29 @@
+<html><head></head><body>
+
+<% json = JSON.parse(@result).first %>
+<% status = json["https://w3id.org/ftr#status"].first['@value']%>
+<% log = json['https://w3id.org/ftr#log'].first['@value'].split("\n")%>
+
+<h2> EJP Core Metadata Test of</h2>
+<h3> <%= @guid %> </h3>
+<br/>
+<br/>
+<br/>
+<H4>RESULT: <%= status.upcase %></H4>
+<br/>
+<br/>
+<H4>LOG</H4>
+<% text = "black" %>
+<% log.each do |line| %>
+    <% text = "black" %>
+    <% text = "red" if line =~ /FAIL/ %>
+    <% text = "orange" if line =~ /WARN/ %>
+    <% text = "green" if line =~ /SUCCESS/ %>
+    
+    
+    <span style="color: <%= text %>;"><%= line %></span><br/>
+<% end %>
+
+
+</body>
+</html>
