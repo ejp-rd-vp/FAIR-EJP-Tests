@@ -155,7 +155,6 @@ class FAIRTest
                       protocol: ENV.fetch('TEST_PROTOCOL', nil),
                       host: ENV.fetch('TEST_HOST', nil),
                       basePath: ENV.fetch('TEST_PATH', nil),
-                      path: ejp_base_metadata_meta[:testid],
                       response_description: 'The response is "pass", "fail" or "indeterminate"',
                       schemas: schemas)
     api.get_api

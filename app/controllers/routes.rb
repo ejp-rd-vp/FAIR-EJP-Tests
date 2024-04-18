@@ -14,18 +14,21 @@ def set_routes(classes: allclasses)
   end
 
   get '/tests/list' do
-    erb :listtests
+    # erb :listtests
+    "TODO in the future..."
   end
+
   post '/tests/:id' do
     content_type :json
     id = params[:id]
     payload = JSON.parse(request.body.read)
     guid = payload['subject'] ? payload['subject'] : params[:subject]
-    begin
+#    begin
       @result = FAIRTest.send(id, **{ guid: guid })
-    rescue StandardError
+      warn "RESULT #{@result}"
+#    rescue StandardError
       @result = '{}'
-    end
+#    end
 
     request.accept.each do |type|
       case type.to_s
