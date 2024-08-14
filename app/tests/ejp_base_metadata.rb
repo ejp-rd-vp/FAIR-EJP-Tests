@@ -122,6 +122,9 @@ class FAIRTest
         else
           # warn "six"
           output.comments << "WARN: the mandatory metadata element #{p} could not be found on the Discoverable entity #{d}\n"
+          if p =~ /landingPage/ 
+            output.comments << "WARN: If you are using the Reference FDP, or FAIR in a box, the #{p} property is labelled 'About Page' in the FDP metadata editing pages.\n"
+          end
           failflag = true
         end
       end
