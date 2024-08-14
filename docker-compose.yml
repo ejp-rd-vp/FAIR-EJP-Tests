@@ -2,11 +2,11 @@ version: "2.0"
 services:
 
   ejptests: 
-    image: markw/ejp-qc-tests:0.1.0
+    image: markw/ejp-qc-tests:0.3.0
     environment:
       TEST_PROTOCOL: http
       TEST_HOST: "tests:4567" # from the perspective of the evaluator container
       TEST_PATH: /tests/     # becomes http://tests:8080/tests/test_name_here
     ports:
-      - "8080:4567"
+      - "40000:4567"
 

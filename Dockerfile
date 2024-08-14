@@ -1,7 +1,7 @@
-FROM ruby:3.0
+FROM ruby:3.0.6
 
 ENV LANG="en_US.UTF-8" LANGUAGE="en_US:UTF-8" LC_ALL="C.UTF-8"
-RUN chmod a+r /etc/resolv.conf
+#RUN chmod a+r /etc/resolv.conf
 
 RUN apt-get dist-upgrade -q && \
     apt-get update -q
